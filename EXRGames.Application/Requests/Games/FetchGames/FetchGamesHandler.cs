@@ -2,7 +2,7 @@
 using EXRGames.Domain;
 using EXRGames.Domain.Interfaces;
 using MediatR;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace EXRGames.Application.Requests.Games {

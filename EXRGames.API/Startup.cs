@@ -4,7 +4,6 @@ using EXRGames.Persistense;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace EXRGames.API {
     public class Startup {

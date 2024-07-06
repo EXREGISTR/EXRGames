@@ -7,6 +7,8 @@ namespace EXRGames.API.Extensions {
             services.AddScoped<IGamesStore, GamesStore>();
             services.AddScoped<ITagsStore, TagsStore>();
             services.AddScoped<IUserProfilesStore, UserProfilesStore>();
+
+            // регистрируй валидаторы и вынеси в каждый проект экстеншен свой
         }
     }
 }
