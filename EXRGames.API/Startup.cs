@@ -3,6 +3,8 @@ using EXRGames.Application.Requests;
 using EXRGames.Persistense;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace EXRGames.API {
     public class Startup {
@@ -35,14 +37,18 @@ namespace EXRGames.API {
             services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(PaginableQuery).Assembly));
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment enviroment) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment enviroment, IServiceProvider services) {
             if (enviroment.IsDevelopment()) {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            using (var serviceScope = services.CreateScope()) {
+                var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationContext>();
+                context.Database.Migrate();
+            }
 
+            app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseAuthentication();

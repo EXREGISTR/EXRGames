@@ -7,7 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.3.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EXRGames.Application\EXRGames.Application.csproj" />
+    <ProjectReference Include="..\EXRGames.Domain\EXRGames.Domain.csproj" />
+    <ProjectReference Include="..\EXRGames.Persistense\EXRGames.Persistense.csproj" />
   </ItemGroup>
 
 </Project>
