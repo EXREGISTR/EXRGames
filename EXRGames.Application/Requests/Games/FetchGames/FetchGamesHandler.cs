@@ -1,4 +1,5 @@
 ﻿using EXRGames.Application.Extensions;
+using EXRGames.Application.Exceptions;
 using EXRGames.Domain;
 using EXRGames.Domain.Interfaces;
 using MediatR;
@@ -76,7 +77,7 @@ namespace EXRGames.Application.Requests.Games {
             return type switch {
                 GameSortType.Title => game => game.Title,
                 GameSortType.Price => game => game.Price,
-                _ => throw new ArgumentOutOfRangeException(nameof(type)),
+                _ => throw new UnknownSortTypeException()
             };
         }
     }
