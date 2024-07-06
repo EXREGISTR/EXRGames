@@ -3,6 +3,7 @@ using EXRGames.Domain;
 using EXRGames.Domain.Interfaces;
 using MediatR;
 using System.Data.Entity;
+using System.Linq.Expressions;
 
 namespace EXRGames.Application.Requests.Games {
     public class FetchGamesHandler : IRequestHandler<FetchGamesQuery, IEnumerable<Game>> {
@@ -17,7 +18,7 @@ namespace EXRGames.Application.Requests.Games {
 
             var games = gamesStore.FetchAll().ApplyPagination(request.Page, request.Limit);
             games = Filter(games, request);
-            games = Sort(games, request.OrderTypes, request.OrderByDescending);
+            games = Sort(games, request);
             return await games.ToListAsync(token);
         }
 
@@ -30,7 +31,7 @@ namespace EXRGames.Application.Requests.Games {
                 games = games.Where(game => game.Title.Contains(query.Search));
             }
 
-            if (query.Tags.Length > 0) {
+            if (query.Tags != null) {
                 games = games
                     .Where(game => game.Tags.Any(tag => query.Tags.Contains(tag.Name)));
             }
@@ -44,7 +45,7 @@ namespace EXRGames.Application.Requests.Games {
                 return games;
             }
 
-            if (minPrice < maxPrice) {
+            if (minPrice > maxPrice) {
                 minPrice = maxPrice;
                 maxPrice = minPrice;
             }
@@ -60,21 +61,23 @@ namespace EXRGames.Application.Requests.Games {
             return games;
         }
 
-        private static IQueryable<Game> Sort(IQueryable<Game> games, OrderType[] orderTypes, bool byDescending) {
-            if (orderTypes.Length < 1) return games;
+        private static IQueryable<Game> Sort(IQueryable<Game> games, FetchGamesQuery query) {
+            if (query.OrderTypes == null) return games;
 
-            foreach (var orderType in orderTypes.Distinct()) {
-                switch (orderType) {
-                    case OrderType.Title:
-                        games = games.OrderBy(x => x.Title);
-                        break;
-                    case OrderType.Price:
-                        games = games.OrderBy(x => x.Price);
-                        break;
-                }
+            foreach (var orderMethod in query.OrderTypes.Distinct()) {
+                var orderSelector = GetOrderSelector(orderMethod.Type);
+                games = games.OrderBy(orderSelector, orderMethod.ByDescending);
             }
 
             return games;
+        }
+
+        private static Expression<Func<Game, object>> GetOrderSelector(GameSortType type) {
+            return type switch {
+                GameSortType.Title => game => game.Title,
+                GameSortType.Price => game => game.Price,
+                _ => throw new ArgumentOutOfRangeException(nameof(type)),
+            };
         }
     }
 }

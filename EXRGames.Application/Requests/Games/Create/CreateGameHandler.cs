@@ -1,7 +1,7 @@
 ﻿using EXRGames.Domain;
 using EXRGames.Domain.Interfaces;
-using EXRGames.Application.Extensions;
 using MediatR;
+using System.Data.Entity;
 
 namespace EXRGames.Application.Requests.Games {
     public class CreateGameHandler : IRequestHandler<CreateGameCommand, string> { 
