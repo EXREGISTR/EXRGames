@@ -1,14 +1,11 @@
-﻿using EXRGames.Domain.Interfaces;
-using EXRGames.Persistense.Repositories;
+﻿using EXRGames.Application.Extensions;
+using EXRGames.Persistense.Extensions;
 
 namespace EXRGames.API.Extensions {
     internal static class ServiceCollectionExtensions {
         public static void AddProjectDependencies(this IServiceCollection services) {
-            services.AddScoped<IGamesStore, GamesStore>();
-            services.AddScoped<ITagsStore, TagsStore>();
-            services.AddScoped<IUserProfilesStore, UserProfilesStore>();
-
-            // регистрируй валидаторы и вынеси в каждый проект экстеншен свой
+            services.AddStores();
+            services.AddMediatorAndValidators();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using EXRGames.API.Extensions;
-using EXRGames.Application.Requests;
 using EXRGames.Persistense;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -32,8 +31,6 @@ namespace EXRGames.API {
                     };
                 });
             services.AddAuthorization();
-
-            services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(PaginableQuery).Assembly));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment enviroment, IServiceProvider services) {
