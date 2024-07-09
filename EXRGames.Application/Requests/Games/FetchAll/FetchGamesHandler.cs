@@ -1,23 +1,18 @@
 ﻿using EXRGames.Application.Extensions;
 using EXRGames.Application.Exceptions;
 using EXRGames.Domain;
-using EXRGames.Domain.Interfaces;
+using EXRGames.Domain.Contracts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace EXRGames.Application.Requests.Games {
-    public class FetchGamesHandler : IRequestHandler<FetchGamesQuery, IEnumerable<Game>> {
-        private readonly IGamesStore gamesStore;
-
-        public FetchGamesHandler(IGamesStore gamesStore) {
-            this.gamesStore = gamesStore;
-        }
-
+    public class FetchGamesHandler(IGamesStore gamesStore) 
+        : IRequestHandler<FetchGamesQuery, IEnumerable<Game>> {
         public async Task<IEnumerable<Game>> Handle(FetchGamesQuery request, CancellationToken token) {
             if (request.MaxPrice == 0) return [];
 
-            var games = gamesStore.FetchAll().ApplyPagination(request.Page, request.Limit);
+            var games = gamesStore.All().ApplyPagination(request.Page, request.Limit);
             games = Filter(games, request);
             games = Sort(games, request);
             return await games.ToListAsync(token);

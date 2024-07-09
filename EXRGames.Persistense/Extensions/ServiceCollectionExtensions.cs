@@ -1,4 +1,4 @@
-﻿using EXRGames.Domain.Interfaces;
+﻿using EXRGames.Domain.Contracts;
 using EXRGames.Persistense.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,6 +8,7 @@ namespace EXRGames.Persistense.Extensions {
             services.AddScoped<IGamesStore, GamesStore>();
             services.AddScoped<ITagsStore, TagsStore>();
             services.AddScoped<IUserProfilesStore, UserProfilesStore>();
+            services.AddDbContext<ApplicationContext>(optionsLifetime: ServiceLifetime.Singleton);
         }
     }
 }

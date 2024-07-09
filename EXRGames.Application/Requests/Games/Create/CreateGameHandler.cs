@@ -1,22 +1,18 @@
 ﻿using EXRGames.Domain;
-using EXRGames.Domain.Interfaces;
+using EXRGames.Domain.Contracts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace EXRGames.Application.Requests.Games {
-    public class CreateGameHandler : IRequestHandler<CreateGameCommand, string> { 
-        private readonly IGamesStore gamesStore;
-        private readonly ITagsStore tagsStore;
-
-        public CreateGameHandler(IGamesStore gamesStore, ITagsStore tagsStore) {
-            this.gamesStore = gamesStore;
-            this.tagsStore = tagsStore;
-        }
-
+    public class CreateGameHandler(IGamesStore gamesStore, ITagsStore tagsStore) : IRequestHandler<CreateGameCommand, string> {
         public async Task<string> Handle(CreateGameCommand request, CancellationToken token) {
-            var tags = await tagsStore.FetchAll()
-                .Where(tag => request.Tags.Contains(tag.Name))
-                .ToListAsync(token);
+            ICollection<Tag> tags = [];
+
+            if (request.Tags != null) {
+                tags = await tagsStore.All()
+                    .Where(tag => request.Tags.Contains(tag.Name))
+                    .ToListAsync(token);
+            }
             
             var game = new Game { 
                 Id = Guid.NewGuid(),
@@ -26,7 +22,7 @@ namespace EXRGames.Application.Requests.Games {
                 Tags = tags,
             };
 
-            await gamesStore.Add(game, token);
+            await gamesStore.Create(game, token);
 
             return game.Id.ToString();
         }

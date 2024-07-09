@@ -1,18 +1,22 @@
 ﻿using EXRGames.Domain;
-using EXRGames.Domain.Interfaces;
+using EXRGames.Domain.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace EXRGames.Persistense.Repositories {
-    public class TagsStore : ITagsStore {
-        public Task Add(string name, CancellationToken token = default) {
-            throw new NotImplementedException();
+    internal class TagsStore(ApplicationContext context) : ITagsStore {
+        private readonly ApplicationContext context = context;
+
+        public async Task Create(string name, CancellationToken token) {
+            await context.Tags.AddAsync(new Tag { Name = name }, token);
+            await context.SaveChangesAsync(token);
         }
 
-        public Task Delete(string name, CancellationToken token = default) {
-            throw new NotImplementedException();
-        }
+        public async Task<bool> Exists(string name, CancellationToken token) 
+            => await All().ContainsAsync(new Tag { Name = name }, token);
 
-        public IQueryable<Tag> FetchAll() {
-            throw new NotImplementedException();
-        }
+        public async Task Delete(string name, CancellationToken token) 
+            => await context.Tags.Where(x => x.Name == name).ExecuteDeleteAsync(token);
+
+        public IQueryable<Tag> All() => context.Tags.AsNoTracking();
     }
 }

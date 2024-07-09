@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EXRGames.Persistense", "EXR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EXRGames.Application", "EXRGames.Application\EXRGames.Application.csproj", "{60AC6B7B-F764-48A4-AA4E-396763C3FBC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EXRGames.API", "EXRGames.API\EXRGames.API.csproj", "{696A79B3-5F21-48B0-88E8-1AB7EE97CC2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EXRGames.API", "EXRGames.API\EXRGames.API.csproj", "{696A79B3-5F21-48B0-88E8-1AB7EE97CC2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

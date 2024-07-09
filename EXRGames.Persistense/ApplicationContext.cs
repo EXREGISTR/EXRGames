@@ -8,11 +8,14 @@ namespace EXRGames.Persistense {
     public class ApplicationContext : IdentityDbContext {
         private readonly IConfiguration configuration;
 
-        public DbSet<Game> Games { get; set; } = null!;
-        public DbSet<Tag> Tags { get; set; } = null!;
-        public DbSet<UserProfile> UserProfiles { get; set; } = null!;
+        internal DbSet<Game> Games { get; set; }
+        internal DbSet<Tag> Tags { get; set; }
+        internal DbSet<UserProfile> UserProfiles { get; set; }
+        internal DbSet<Friend> Friends { get; set; }
 
-        public ApplicationContext(DbContextOptions<ApplicationContext> options, 
+        public ApplicationContext() { }
+
+        public ApplicationContext(DbContextOptions<ApplicationContext> options,
             IConfiguration configuration) : base(options) {
             this.configuration = configuration;
         }

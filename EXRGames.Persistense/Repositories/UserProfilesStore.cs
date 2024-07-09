@@ -1,18 +1,10 @@
 ﻿using EXRGames.Domain;
-using EXRGames.Domain.Interfaces;
+using EXRGames.Domain.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace EXRGames.Persistense.Repositories {
-    public class UserProfilesStore : IUserProfilesStore {
-        public Task Add(UserProfile profile, CancellationToken token = default) {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<UserProfile> FetchAll() {
-            throw new NotImplementedException();
-        }
-
-        public Task Update(UserProfile profile, CancellationToken token = default) {
-            throw new NotImplementedException();
-        }
+    internal class UserProfilesStore(ApplicationContext context) : Store<UserProfile>(context), IUserProfilesStore {
+        public async Task<UserProfile?> Fetch(string id, CancellationToken token = default)
+            => await Table.FirstOrDefaultAsync(x => x.Id == id, token);
     }
 }

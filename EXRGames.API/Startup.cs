@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EXRGames.API {
     public class Startup {
         public void ConfigureServices(IServiceCollection services) {
-            services.AddDbContext<ApplicationContext>(optionsLifetime: ServiceLifetime.Singleton);
+            services.AddProjectDependencies();
 
             services.AddIdentity<IdentityUser, IdentityRole>(options => {
                 options.Password.RequiredLength = 6;
@@ -17,8 +17,6 @@ namespace EXRGames.API {
 
                 options.Lockout.MaxFailedAccessAttempts = 5;
             }).AddEntityFrameworkStores<ApplicationContext>();
-
-            services.AddProjectDependencies();
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();

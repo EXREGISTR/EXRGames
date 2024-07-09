@@ -11,14 +11,10 @@ namespace EXRGames.Persistense.Configurations {
             builder.Property(x => x.Nickname)
                 .IsRequired()
                 .HasMaxLength(UserProfile.MaxNicknameLength);
-        }
-    }
 
-    internal class TagConfiguration : IEntityTypeConfiguration<Tag> {
-        public void Configure(EntityTypeBuilder<Tag> builder) {
-            builder.ToTable("tags");
-
-            builder.HasKey(x => x.Name);
+            builder.HasMany(x => x.Games)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("user_games"));
         }
     }
 }
