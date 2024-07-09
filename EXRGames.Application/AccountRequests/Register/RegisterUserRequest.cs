@@ -1,7 +1,5 @@
-﻿using MediatR;
-
-namespace EXRGames.Application.Requests.Accounts {
-    public class RegisterUserCommand : IRequest<string> {
+﻿namespace EXRGames.Application.AccountRequests {
+    public class RegisterUserRequest {
         public required string Username { get; set; }
         public required string Password { get; set; }
 

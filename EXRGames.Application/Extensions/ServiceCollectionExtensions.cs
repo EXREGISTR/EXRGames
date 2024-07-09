@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
+﻿using EXRGames.Application.AccountRequests;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -11,9 +11,11 @@ namespace EXRGames.Application.Extensions {
                 options.RegisterServicesFromAssembly(assembly)
             );
 
-            services.AddValidatorsFromAssembly(assembly);
-            services.AddFluentValidationAutoValidation()
-                .AddFluentValidationClientsideAdapters();
+            RegisterExplicitValidators(services);
+        }
+
+        private static void RegisterExplicitValidators(IServiceCollection services) {
+            services.AddScoped<IValidator<RegisterUserRequest>, RegisterUserValidator>();
         }
     }
 }

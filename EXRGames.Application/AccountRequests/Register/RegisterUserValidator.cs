@@ -1,8 +1,8 @@
 ﻿using EXRGames.Domain;
 using FluentValidation;
 
-namespace EXRGames.Application.Requests.Accounts {
-    internal class RegisterUserValidator : AbstractValidator<RegisterUserCommand> {
+namespace EXRGames.Application.AccountRequests {
+    internal class RegisterUserValidator : AbstractValidator<RegisterUserRequest> {
         public RegisterUserValidator() {
             RuleFor(x => x.Username)
                 .NotEmpty()

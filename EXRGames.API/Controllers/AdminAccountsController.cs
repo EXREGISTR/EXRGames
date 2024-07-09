@@ -7,6 +7,6 @@ namespace EXRGames.API.Controllers {
     [Authorize(Roles = UserRoles.Superuser)]
     [ApiController]
     public class AdminAccountsController : ControllerBase {
-        // добавлять/удалять аккаунты для админов
+
     }
 }

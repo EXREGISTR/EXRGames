@@ -12,7 +12,7 @@ namespace EXRGames.API {
             services.AddIdentity<IdentityUser, IdentityRole>(options => {
                 options.Password.RequiredLength = 6;
                 options.Password.RequireDigit = true;
-                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireUppercase = false;
 
                 options.Lockout.MaxFailedAccessAttempts = 5;
@@ -31,15 +31,10 @@ namespace EXRGames.API {
             services.AddAuthorization();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment enviroment, IServiceProvider services) {
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment enviroment, IServiceProvider services) {
             if (enviroment.IsDevelopment()) {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
-
-            using (var serviceScope = services.CreateScope()) {
-                var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationContext>();
-                context.Database.Migrate();
             }
 
             app.UseHttpsRedirection();
@@ -51,6 +46,18 @@ namespace EXRGames.API {
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
             });
+
+            await InitializeDatabase(services);
         }
+
+        private static async Task InitializeDatabase(IServiceProvider services) {
+            using var scope = services.CreateScope();
+
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            context.Database.Migrate();
+
+            var initializator = scope.ServiceProvider.GetRequiredService<DbInitializator>();
+            await initializator.Initialize();
+        } 
     }
 }
