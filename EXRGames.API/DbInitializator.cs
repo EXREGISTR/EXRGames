@@ -1,5 +1,4 @@
-﻿using EXRGames.API.Constants;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace EXRGames.API {
     internal class DbInitializator(

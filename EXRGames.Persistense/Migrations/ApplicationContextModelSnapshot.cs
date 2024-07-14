@@ -22,29 +22,10 @@ namespace EXRGames.Persistense.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("EXRGames.Domain.Friend", b =>
-                {
-                    b.Property<string>("SenderId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("TargetId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("SenderId", "TargetId");
-
-                    b.HasIndex("TargetId");
-
-                    b.ToTable("friends", (string)null);
-                });
-
             modelBuilder.Entity("EXRGames.Domain.Game", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(36)
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
@@ -87,12 +68,30 @@ namespace EXRGames.Persistense.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<DateOnly?>("RegistrationDate")
+                    b.Property<DateOnly>("RegistrationDate")
                         .HasColumnType("date");
 
                     b.HasKey("Id");
 
                     b.ToTable("user_profiles", (string)null);
+                });
+
+            modelBuilder.Entity("EXRGames.Domain.UserRelationship", b =>
+                {
+                    b.Property<string>("SenderId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("TargetId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("SenderId", "TargetId");
+
+                    b.HasIndex("TargetId");
+
+                    b.ToTable("user_relationships", (string)null);
                 });
 
             modelBuilder.Entity("GameTag", b =>
@@ -321,7 +320,7 @@ namespace EXRGames.Persistense.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("EXRGames.Domain.Friend", b =>
+            modelBuilder.Entity("EXRGames.Domain.UserRelationship", b =>
                 {
                     b.HasOne("EXRGames.Domain.UserProfile", "SenderProifle")
                         .WithMany("Friends")

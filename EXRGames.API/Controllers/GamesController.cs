@@ -1,5 +1,4 @@
-﻿using EXRGames.API.Constants;
-using EXRGames.Application.Requests.Games;
+﻿using EXRGames.Application.Requests.Games;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

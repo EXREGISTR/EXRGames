@@ -8,7 +8,7 @@ namespace EXRGames.Application.Requests.Tags {
 
         public async Task Handle(CreateTagCommand request, CancellationToken token) {
             if (await store.Exists(request.Tag, token)) {
-                throw new TagAlreadyContainsException();
+                throw new EntityAlreadyExistsException();
             }
 
             await store.Create(request.Tag.ToLower(), token);

@@ -1,8 +1,8 @@
-﻿using EXRGames.Domain;
+﻿using EXRGames.Application.Responses.Games;
 using MediatR;
 
 namespace EXRGames.Application.Requests.Games {
-    public class FetchGamesQuery : PaginableQuery, IRequest<IEnumerable<Game>> {
+    public class FetchGamesQuery : PaginableQuery, IRequest<GamesResponse> {
         public string? Search { get; set; }
         public string[]? Tags { get; set; }
         public decimal MinPrice { get; set; } = 0;

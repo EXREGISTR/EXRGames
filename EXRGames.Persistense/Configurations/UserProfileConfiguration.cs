@@ -8,9 +8,10 @@ namespace EXRGames.Persistense.Configurations {
             builder.ToTable("user_profiles");
 
             builder.HasKey(x => x.Id);
+
             builder.Property(x => x.Nickname)
                 .IsRequired()
-                .HasMaxLength(UserProfile.MaxNicknameLength);
+                .HasMaxLength(Constants.MaxNameLength);
 
             builder.HasMany(x => x.Games)
                 .WithMany()

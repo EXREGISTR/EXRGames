@@ -8,8 +8,6 @@ namespace EXRGames.Persistense.Configurations {
             builder.ToTable("games");
 
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id)
-                .HasMaxLength(36);
 
             builder.Property(x => x.Title)
                 .HasMaxLength(Game.MaxTitleLength)

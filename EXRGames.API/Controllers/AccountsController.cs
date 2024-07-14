@@ -1,28 +1,22 @@
-﻿using EXRGames.Application.AccountRequests;
+﻿using EXRGames.API.Requests.Accounts.User;
 using EXRGames.Domain;
 using EXRGames.Domain.Contracts;
-using FluentValidation;
+using EXRGames.Domain.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Transactions;
 
 namespace EXRGames.API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class AccountsController(
         IUserProfilesStore profilesStore,
+        IUnitOfWork unitOfWork,
         UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager,
-        IValidator<RegisterUserRequest> registrationValidator) : ControllerBase {
+        SignInManager<IdentityUser> signInManager) : ControllerBase {
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken token) {
-            var validationResult = registrationValidator.Validate(request);
-            if (!validationResult.IsValid) {
-                return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
-            }
-
             var tempUser = await userManager.FindByNameAsync(request.Username);
             if (tempUser != null) {
                 return Conflict($"User with login {request.Username} already exists!");
@@ -30,27 +24,51 @@ namespace EXRGames.API.Controllers {
 
             var id = Guid.NewGuid().ToString();
 
+            var result = await RegisterInternal(id, request, token);
+
+            if (!result) {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            return Ok(id);
+        }
+
+        private async Task<bool> RegisterInternal(string userId, RegisterUserRequest request, CancellationToken token) {
             var user = new IdentityUser {
-                Id = id,
+                Id = userId,
                 UserName = request.Username,
             };
 
             var profile = new UserProfile {
-                Id = id,
+                Id = userId,
                 Nickname = request.Nickname ?? request.Username,
                 RegistrationDate = DateOnly.FromDateTime(DateTime.UtcNow),
-                BirthDate = DateOnly.FromDateTime(request.BirthDate),
+                BirthDate = request.BirthDate != null
+                    ? DateOnly.FromDateTime(request.BirthDate.Value)
+                    : null,
             };
 
-            await profilesStore.Create(profile, token);
+            using var transaction = unitOfWork.BeginTransaction();
 
-            var result = await userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded) {
-                return StatusCode(StatusCodes.Status500InternalServerError);
+            try {
+                var result = await userManager.CreateAsync(user, request.Password);
+                if (!result.Succeeded) {
+                    return false;
+                }
+
+                await userManager.AddToRoleAsync(user, UserRoles.User);
+
+                await profilesStore.Create(profile, token);
+
+                await signInManager.SignInAsync(user, isPersistent: false);
+
+                transaction.Commit();
+            } catch (Exception) {
+                transaction.Rollback();
+                return false;
             }
 
-            await signInManager.SignInAsync(user, isPersistent: false);
-            return Ok(user.Id);
+            return true;
         }
 
         [HttpPost("login")]
@@ -59,7 +77,7 @@ namespace EXRGames.API.Controllers {
                 request.Username, request.Password, request.RememberMe, false);
 
             if (!result.Succeeded) {
-                return BadRequest("Incorrect login and/or password");
+                return BadRequest("Incorrect login or/and password");
             }
 
             var user = await userManager.FindByNameAsync(request.Username);
@@ -87,21 +105,29 @@ namespace EXRGames.API.Controllers {
                 return Conflict("Invalid password");
             }
 
-            using var transactionScope = new TransactionScope();
-            await userManager.DeleteAsync(user);
+            using var transaction = unitOfWork.BeginTransaction();
 
-            var profile = await profilesStore.Fetch(request.Id, token);
-
-            if (profile == null) {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Profile doesn't exists. How its happens??? lulw...");
+            try {
+                await DeleteInternal(user, token);
+                transaction.Commit();
+            } catch (Exception) {
+                transaction.Rollback();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            await profilesStore.Delete(profile!, token);
-
-            transactionScope.Complete();
-            await signInManager.SignOutAsync();
             return Ok();
+        }
+
+        private async Task DeleteInternal(IdentityUser user, CancellationToken token) {
+            await userManager.DeleteAsync(user);
+
+            var profile = await profilesStore.Fetch(user.Id, token);
+
+            if (profile != null) {
+                await profilesStore.Delete(profile, token);
+            }
+
+            await signInManager.SignOutAsync();
         }
     }
 }

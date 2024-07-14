@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace EXRGames.Application.Requests.Games {
-    public class CreateGameHandler(IGamesStore gamesStore, ITagsStore tagsStore) : IRequestHandler<CreateGameCommand, string> {
+    internal class CreateGameHandler(IGamesStore gamesStore, ITagsStore tagsStore) : IRequestHandler<CreateGameCommand, string> {
         public async Task<string> Handle(CreateGameCommand request, CancellationToken token) {
             ICollection<Tag> tags = [];
 

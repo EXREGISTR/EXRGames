@@ -1,5 +1,4 @@
-﻿using EXRGames.API.Constants;
-using EXRGames.Application.Exceptions;
+﻿using EXRGames.Application.Exceptions;
 using EXRGames.Application.Requests.Tags;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +13,7 @@ namespace EXRGames.API.Controllers {
         public async Task<IActionResult> Create([FromBody] CreateTagCommand request, CancellationToken token) {
             try {
                 await mediator.Send(request, token);
-            } catch (TagAlreadyContainsException) {
+            } catch (EntityAlreadyExistsException) {
                 return Conflict($"Tag {request.Tag.ToLower()} already exists!");
             }
 
