@@ -2,12 +2,11 @@
 using EXRGames.Application.Responses.UserRelationships;
 using EXRGames.Domain.Contracts;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace EXRGames.Application.Requests.UserRelationships {
     internal class FetchFriendsHandler(IUserRelationshipsStore store) : IRequestHandler<FetchFriendsQuery, FriendProfilesResponse> {
         public async Task<FriendProfilesResponse> Handle(FetchFriendsQuery request, CancellationToken token) {
-            var relationships = store.All().ApplyPagination(request.Page, request.Limit);
+            var relationships = store.All();
 
             if (request.Status != null) {
                 relationships = relationships
@@ -22,7 +21,7 @@ namespace EXRGames.Application.Requests.UserRelationships {
                     x.TargetProfile.Id, 
                     x.TargetProfile.Nickname,
                     x.Status!.Value))
-                .ToListAsync(token);
+                .ToPagedAsync(request.Page, request.Size, token);
 
             return new(profiles);
         }

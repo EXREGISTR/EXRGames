@@ -1,4 +1,5 @@
-﻿using EXRGames.Domain;
+﻿using EXRGames.Application.Pagination;
+using EXRGames.Domain;
 
 namespace EXRGames.Application.Responses.UserRelationships {
     public record FriendProfileResponse(
@@ -7,5 +8,5 @@ namespace EXRGames.Application.Responses.UserRelationships {
         RelationshipStatus Status
     );
 
-    public record struct FriendProfilesResponse(IEnumerable<FriendProfileResponse> Profiles);
+    public record struct FriendProfilesResponse(PagedEnumerable<FriendProfileResponse> Profiles);
 }

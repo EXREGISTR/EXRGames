@@ -1,4 +1,5 @@
-﻿using EXRGames.Application.Responses.Users;
+﻿using EXRGames.Application.Pagination;
+using EXRGames.Application.Responses.Users;
 using MediatR;
 
 namespace EXRGames.Application.Requests.UserRelationships

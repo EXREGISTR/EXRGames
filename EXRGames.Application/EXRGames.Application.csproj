@@ -16,8 +16,4 @@
     <ProjectReference Include="..\EXRGames.Domain\EXRGames.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Requests\Users\" />
-  </ItemGroup>
-
 </Project>

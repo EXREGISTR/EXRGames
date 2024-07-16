@@ -11,14 +11,14 @@ namespace EXRGames.Application.Requests.Games {
     public class FetchGamesHandler(IGamesStore gamesStore) 
         : IRequestHandler<FetchGamesQuery, GamesResponse> {
         public async Task<GamesResponse> Handle(FetchGamesQuery request, CancellationToken token) {
-            var games = gamesStore.All()
-                .ApplyPagination(request.Page, request.Limit);
+            var games = gamesStore.All();
+
             games = Filter(games, request);
             games = Sort(games, request);
 
             var gamesResponse = await games
                 .Select(x => new GameResponse(x.Id, x.Title, x.Price))
-                .ToListAsync(token);
+                .ToPagedAsync(request.Page, request.Size, token);
 
             return new(gamesResponse);
         }
@@ -56,7 +56,7 @@ namespace EXRGames.Application.Requests.Games {
                 games = games.Where(x => x.Price >= minPrice);
             }
 
-            if (maxPrice < int.MaxValue) {
+            if (maxPrice < decimal.MaxValue) {
                 games = games.Where(x => x.Price <= maxPrice);
             }
 

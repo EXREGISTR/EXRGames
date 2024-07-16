@@ -10,7 +10,7 @@ namespace EXRGames.Application.Requests.Games {
                 .WithMessage($"Title should be has maximal length {Game.MaxTitleLength}");
 
             RuleFor(x => x.Price)
-                .GreaterThanOrEqualTo(0)
+                .GreaterThanOrEqualTo(decimal.Zero)
                 .WithMessage("Incorrect price value");
         }
     }
